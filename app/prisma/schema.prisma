@@ -1,0 +1,2738 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TipoConta {
+  CONSULTORIO
+  CLINICA_I
+  CLINICA_II
+  ADMIN
+}
+
+model Conta {
+  id_conta   Int       @id @default(autoincrement())
+  tx_nome    String    @db.VarChar(200)
+  cd_tipo    TipoConta @default(CONSULTORIO)
+  fl_ativo   Boolean   @default(true)
+  dt_criacao DateTime  @default(now())
+
+  usuarios            Usuario[]
+  prestadores         Prestador[]
+  pacientes           Paciente[]
+  agendas             Agenda[]
+  agendaItens         AgendaItem[]
+  especialidades      Especialidade[]
+  convenios           Convenio[]
+  modulos             AppModulo[]
+  fornecedores        Fornecedor[]
+  contasBancarias     ContaBancaria[]
+  tratamentos         Tratamento[]
+  unidades            UnidadeAtendimento[]
+  categoriasConta     CategoriaConta[]
+  tabelasProcedimento TabelaProcedimento[]
+  tabelasMaterial     TabelaMaterial[]
+  medicamentos        Medicamento[]
+  recebimentos        Recebimento[]
+  despesas            Despesa[]
+  retornos            Retorno[]
+  credenciamentos     Credenciamento[]
+  estoqueItens        EstoqueItem[]
+  escolas             Escola[]
+  ptItens             PtItem[]
+  receberCrs          ReceberCR[]
+  fluxosCaixa         FluxoCaixa[]
+  anamneses           Anamnese[]
+  editoresTexto       EditorTexto[]
+  documentos          Documento[]
+  historicos          Historico[]
+  regrasComissao      RegraComissao[]
+  cartoesTransacao    CartaoTransacao[]
+  perfis              Perfil[]
+  repasses            Repasse[]
+  gruposConta         GrupoConta[]
+  camposLivres        CampoLivre[]
+  agendaBloqueios     AgendaBloqueio[]
+  agendaReservas      AgendaReserva[]
+  beneficios          Beneficio[]
+  pagarCrs            PagarCR[]
+  servicosProtese     ServicoProtese[]
+  pacienteEnderecos   PacienteEndereco[]
+  pacienteFones       PacienteFone[]
+  pacienteEmails      PacienteEmail[]
+  pacienteBeneficios  PacienteBeneficio[]
+  prestadorEnderecos  PrestadorEndereco[]
+  prestadorFones      PrestadorFone[]
+  prestadorEmails     PrestadorEmail[]
+  recibos             Recibo[]
+  taxasCobranca       TaxaCobranca[]
+  simbolosOdonto      SimboloOdonto[]
+  ptItensEndo         PtItemEndo[]
+  reservas            Reserva[]
+  avisos              Aviso[]
+  malasDiretas        MalaDireta[]
+  empresaEnderecos    EmpresaEndereco[]
+  empresaFones        EmpresaFone[]
+  empresaEmails       EmpresaEmail[]
+  checkoutContas      CheckoutConta[]
+  checkoutCarteiras   CheckoutCarteira[]
+  estoques            Estoque[]
+  rpsList             Rps[]
+  assinaturasDigitais AssinaturaDigital[]
+  sigPtItens          SigPtItem[]
+  timelineItens       TimelineItem[]
+  pessoaDocumentos    PessoaDocumento[]
+  ptParcelasTmp       PtParcelaTmp[]
+  tituloItens         TituloItem[]
+  prestadorContaPrefs PrestadorContaPreferencia[]
+  restricoesFinanc    RestricaoFinanceira[]
+  receberDbParcelas   ReceberDBParcela[]
+  ptArcadaAnomalias   PtArcadaAnomalia[]
+  confirmacoes        Confirmacao[]
+  envioLotes          EnvioLote[]
+  linkAnamneses       LinkAnamnese[]
+  editorRascunhos     EditorRascunho[]
+  agendaItemCampos    AgendaItemCampo[]
+  dataExports         DataExport[]
+  dataExportItens     DataExportItem[]
+  relatorioUsuarios   RelatorioUsuario[]
+  reservaIntegracoes  ReservaIntegracao[]
+  chkCartTipoParc     CheckoutCarteiraTipoParcelamento[]
+  chkCobrancaLogs     CheckoutCobrancaLog[]
+  chkCobrancaParcelas CheckoutCobrancaParcela[]
+  chkTipoParcelamento CheckoutTipoParcelamento[]
+  chkContaDocumentos  CheckoutContaDocumento[]
+  chkExtratos         CheckoutExtrato[]
+  restricoesFinPac    RestricaoFinanceiraPaciente[]
+  pacienteFotos       PacienteFoto[]
+  prestadorFotos      PrestadorFoto[]
+  rpsEmitentes        RpsEmitente[]
+
+  @@map("conta")
+}
+
+// ─── USUARIO ─────────────────────────────────────────────────────
+
+model Usuario {
+  id_usuario Int      @id @default(autoincrement())
+  tx_login   String   @db.VarChar(200)
+  tx_email   String   @unique @db.VarChar(200)
+  tx_senha   String   @db.VarChar(200)
+  tx_nome    String   @db.VarChar(200)
+  fl_ativo   Boolean  @default(true)
+  dt_criacao DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  id_prestador Int?
+  id_perfil    Int?
+
+  // --- campos adicionais RE-COMPLETA ---
+  cd_usuario                     String?  @db.VarChar(50)
+  tx_descricao                   String?  @db.VarChar(200)
+  id_agenda                      Int?
+  id_tipo_conta                  Int?
+  id_tipo_prestador              Int?
+  id_prestador_conta             Int?
+  id_def_cpagar_conta            Int?
+  id_unidade_atendimento         Int?
+  id_def_texto_sms_agendamento   Int?
+  id_def_texto_receita           Int?
+  id_def_texto_atestado          Int?
+  id_def_modelo_etiqueta         Int?
+  id_def_modelo_orcamento        Int?
+  vl_qtd_unidade                 Int?
+  vl_saldo_sms                   Int?
+  vl_pref_doc_organizar          String?  @db.VarChar(50)
+  vl_pref_doc_tamanho            String?  @db.VarChar(50)
+  tx_ddi_local                   String?  @db.VarChar(10)
+  tx_ddd_local                   String?  @db.VarChar(10)
+  tx_crm_url                     String?  @db.VarChar(500)
+  tx_lista_id_agenda_notify      String?  @db.Text
+
+  // flags de controle
+  fl_reiniciar                   Boolean  @default(false)
+  fl_bloquear                    Boolean  @default(false)
+  fl_reiniciar_senha             Boolean  @default(false)
+  fl_esqueci_senha               Boolean  @default(false)
+  fl_admin_conta                 Boolean  @default(false)
+  fl_desmarcar_dentes            Boolean  @default(false)
+  fl_remover_9_ddd31             Boolean  @default(false)
+  fl_notificacao                 Boolean  @default(false)
+  fl_controle_horario            Boolean  @default(false)
+  fl_controle_unidade            Boolean  @default(false)
+  fl_controle_prestador          Boolean  @default(false)
+  fl_conectividade_tiss          Boolean  @default(false)
+  fl_sig_plataforma              Boolean  @default(false)
+  fl_asaas_habilitado            Boolean  @default(false)
+  fl_asaas                       Boolean  @default(false)
+  fl_agenda_unidade              Boolean  @default(false)
+  fl_crm                         Boolean  @default(false)
+  fl_creceber_paciente_ativo     Boolean  @default(false)
+  fl_nova_interface_ficha_clinica Boolean @default(false)
+  fl_nfse_asaas                  Boolean  @default(false)
+
+  permissoes LoginPermissao[]
+  sessoes    Sessao[]
+
+  @@map("usuario")
+}
+
+// ─── PRESTADOR ───────────────────────────────────────────────────
+
+model Prestador {
+  id_prestador           Int      @id @default(autoincrement())
+  tx_nome                String   @db.VarChar(200)
+  tx_apelido             String?  @db.VarChar(100)
+  tx_cpf                 String?  @db.VarChar(14)
+  tx_cro                 String?  @db.VarChar(50)
+  id_cro_uf              String?  @db.VarChar(2)
+  tx_email               String?  @db.VarChar(200)
+  tx_celular             String?  @db.VarChar(20)
+  cd_tipo                String?  @db.VarChar(50)
+  fl_habilitado          Boolean  @default(true)
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+  cd_tipo_pessoa         String?  @db.VarChar(20)
+  tx_codigo              String?  @db.VarChar(50)
+  id_tipo_prestador      String?  @db.VarChar(50)
+  id_tipo_pessoa         String?  @db.VarChar(50)
+  tx_razao_social        String?  @db.VarChar(200)
+  tx_cnpj                String?  @db.VarChar(18)
+  tx_observacoes         String?  @db.Text
+  tx_email_remetente     String?  @db.VarChar(200)
+  id_resp_sexo           String?  @db.VarChar(20)
+  id_resp_estado_civil   String?  @db.VarChar(20)
+  id_resp_prefixo        String?  @db.VarChar(20)
+  tx_resp_nome           String?  @db.VarChar(200)
+  tx_resp_cpf            String?  @db.VarChar(14)
+  tx_resp_cro            String?  @db.VarChar(50)
+  id_resp_cro_uf         String?  @db.VarChar(2)
+  tx_resp_doc            String?  @db.VarChar(30)
+  id_resp_tipo_doc       String?  @db.VarChar(20)
+  id_resp_doc_uf         String?  @db.VarChar(2)
+  id_resp_doc_orgao      String?  @db.VarChar(50)
+  dt_resp_data_nasc      DateTime?
+  tx_resp_inss           String?  @db.VarChar(30)
+  id_tipo_endereco       String?  @db.VarChar(20)
+  tx_cep                 String?  @db.VarChar(10)
+  id_tipo_logradouro     String?  @db.VarChar(10)
+  tx_endereco            String?  @db.VarChar(200)
+  tx_numero              String?  @db.VarChar(10)
+  tx_complemento         String?  @db.VarChar(50)
+  tx_referencia          String?  @db.VarChar(100)
+  id_uf                  String?  @db.VarChar(2)
+  id_cidade              String?  @db.VarChar(100)
+  id_bairro              String?  @db.VarChar(100)
+  id_tipo_fone1          String?  @db.VarChar(20)
+  tx_fone_ddd1           String?  @db.VarChar(4)
+  tx_fone_nro1           String?  @db.VarChar(20)
+  tx_fone_ram1           String?  @db.VarChar(10)
+  id_tipo_fone2          String?  @db.VarChar(20)
+  tx_fone_ddd2           String?  @db.VarChar(4)
+  tx_fone_nro2           String?  @db.VarChar(20)
+  tx_fone_ram2           String?  @db.VarChar(10)
+  id_tipo_email1         String?  @db.VarChar(20)
+  tx_email1              String?  @db.VarChar(200)
+  id_tipo_email2         String?  @db.VarChar(20)
+  tx_email2              String?  @db.VarChar(200)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  id_especialidade       Int?
+  especialidade          Especialidade? @relation(fields: [id_especialidade], references: [id_especialidade])
+
+  id_prestador_principal Int?
+
+  agendas         Agenda[]
+  agendaItens     AgendaItem[]
+  tratamentos     Tratamento[]
+  credenciamentos Credenciamento[]
+  retornos        Retorno[]
+  contasBancarias ContaBancaria[]
+  ptItens         PtItem[]
+  receberCrs      ReceberCR[]
+  fluxosCaixa     FluxoCaixa[]
+  historicos      Historico[]
+  regrasComissao  RegraComissao[]
+  enderecos       PrestadorEndereco[]
+  fones           PrestadorFone[]
+  emailsSub       PrestadorEmail[]
+
+  @@map("prestador")
+}
+
+// ─── PACIENTE ────────────────────────────────────────────────────
+
+model Paciente {
+  id_paciente      Int       @id @default(autoincrement())
+  tx_nome          String    @db.VarChar(200)
+  dt_nascimento    DateTime?
+  id_sexo          String?   @db.VarChar(20)
+  tx_cpf           String?   @db.VarChar(14)
+  id_doc_tipo      String?   @db.VarChar(20)
+  tx_doc_nro       String?   @db.VarChar(30)
+  tx_apelido       String?   @db.VarChar(100)
+  tx_nome_social   String?   @db.VarChar(200)
+  tx_nome_conjuge  String?   @db.VarChar(200)
+  tx_nome_mae      String?   @db.VarChar(200)
+  tx_nome_pai      String?   @db.VarChar(200)
+  id_estado_civil  String?   @db.VarChar(20)
+  id_tipo_indicacao String?  @db.VarChar(50)
+  tx_indicacao     String?   @db.VarChar(200)
+  tx_prontuario    String?   @db.VarChar(30)
+  tx_observ        String?   @db.Text
+  id_ocupacao      String?   @db.VarChar(50)
+  id_raca          String?   @db.VarChar(20)
+  tx_codigo        String?   @db.VarChar(50)
+  id_situacao      String?   @db.VarChar(20)
+  id_status        String?   @db.VarChar(20)
+  tx_portal        String?   @db.VarChar(255)
+  tx_foto          String?   @db.Text
+  id_tipo_endereco String?   @db.VarChar(20)
+  tx_cep           String?   @db.VarChar(10)
+  id_tipo_logradouro String? @db.VarChar(10)
+  tx_endereco      String?   @db.VarChar(200)
+  tx_numero        String?   @db.VarChar(10)
+  tx_complemento   String?   @db.VarChar(50)
+  tx_referencia    String?   @db.VarChar(100)
+  id_uf            String?   @db.VarChar(2)
+  id_cidade        String?   @db.VarChar(100)
+  id_bairro        String?   @db.VarChar(100)
+  id_tipo_fone1    String?   @db.VarChar(20)
+  tx_fone_ddd1     String?   @db.VarChar(4)
+  tx_fone_nro1     String?   @db.VarChar(20)
+  tx_fone_ram1     String?   @db.VarChar(10)
+  id_tipo_fone2    String?   @db.VarChar(20)
+  tx_fone_ddd2     String?   @db.VarChar(4)
+  tx_fone_nro2     String?   @db.VarChar(20)
+  tx_fone_ram2     String?   @db.VarChar(10)
+  id_tipo_fone3    String?   @db.VarChar(20)
+  tx_fone_ddd3     String?   @db.VarChar(4)
+  tx_fone_nro3     String?   @db.VarChar(20)
+  tx_fone_ram3     String?   @db.VarChar(10)
+  id_tipo_email1   String?   @db.VarChar(20)
+  tx_email1        String?   @db.VarChar(200)
+  id_tipo_email2   String?   @db.VarChar(20)
+  tx_email2        String?   @db.VarChar(200)
+  fl_tem_plano     Boolean   @default(false)
+  id_operadora     Int?
+  id_produto       String?   @db.VarChar(50)
+  id_tab_prc       Int?
+  tx_matricula     String?   @db.VarChar(30)
+  dt_validade      DateTime?
+  tx_campos_livres String?   @db.Text
+  fl_publico       Boolean   @default(false)
+  fl_ativo         Boolean   @default(true)
+  dt_criacao       DateTime  @default(now())
+
+  id_conta         Int
+  conta            Conta @relation(fields: [id_conta], references: [id_conta])
+
+  id_prestador_res Int?
+
+  agendaItens  AgendaItem[]
+  tratamentos  Tratamento[]
+  recebimentos Recebimento[]
+  retornos     Retorno[]
+  receberCrs   ReceberCR[]
+  documentos   Documento[]
+  historicos   Historico[]
+  enderecos    PacienteEndereco[]
+  fones        PacienteFone[]
+  emails       PacienteEmail[]
+  beneficiosSub PacienteBeneficio[]
+
+  @@map("paciente")
+}
+
+// ─── AGENDA ──────────────────────────────────────────────────────
+
+model Agenda {
+  id_agenda                           Int       @id @default(autoincrement())
+  tx_descricao                        String    @db.VarChar(200)
+  fl_ativo                            Boolean   @default(true)
+  dt_inicio                           String?   @db.VarChar(5)
+  dt_fim                              String?   @db.VarChar(5)
+  cd_dia_semana                       String?   @db.VarChar(20)
+  nr_intervalo                        Int       @default(30)
+  dt_criacao                          DateTime  @default(now())
+  dt_ini_grade                        DateTime?
+  dt_fin_grade                        DateTime?
+  vl_duracao_padrao                   Int?
+  vl_zoom                             Int?
+  id_formato_agendamento              Int?
+  vl_def_opcao_novo_agendamento       Int?
+  fl_alerta_agendamento               Boolean   @default(false)
+  id_def_status                       Int?
+  id_status_envio_confirm_enviado     Int?
+  id_status_ret_confirm_sim           Int?
+  id_status_ret_confirm_nao           Int?
+  id_status_ret_confirm_nao_antecedencia Int?
+  fl_omitir_domingo                   Boolean   @default(false)
+  fl_omitir_sabado                    Boolean   @default(false)
+  fl_omitir_nao_utilizados            Boolean   @default(false)
+  fl_notificacao_email                Boolean   @default(false)
+  tx_notificacao_email                String?   @db.VarChar(200)
+  fl_agendamento_simultaneo           Boolean   @default(false)
+  fl_elegibilidade_automatica         Boolean   @default(false)
+  fl_informar_procedimento_agenda     Boolean   @default(false)
+  id_cor                              Int?
+  fl_autoagendamento                  Boolean   @default(false)
+  fl_confirmacao_agendamento          Boolean   @default(false)
+  id_meio_envio_confirmacao           Int?
+  vl_antecedencia_confirmacao         Int?
+  id_texto_envio_confirmacao          Int?
+  fl_lembrete_agendamento             Boolean   @default(false)
+  id_meio_envio_lembrete              Int?
+  vl_antecedencia_lembrete            Int?
+  id_texto_envio_lembrete             Int?
+  fl_protocolo_agendamento            Boolean   @default(false)
+  id_meio_envio_protocolo             Int?
+  id_texto_envio_protocolo            Int?
+  fl_lembrete_retorno                 Boolean   @default(false)
+  id_meio_envio_retorno               Int?
+  id_texto_envio_retorno              Int?
+
+  id_prestador Int
+  prestador    Prestador @relation(fields: [id_prestador], references: [id_prestador])
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  tx_agendamento_simultaneo String?  @db.VarChar(200)
+  id_oauth_google           String?  @db.VarChar(200)
+  id_oauth_boaconsulta      String?  @db.VarChar(200)
+  tx_cor                    String?  @db.VarChar(20)
+  vl_cor                    String?  @db.VarChar(20)
+  fl_autoagendamento_odp    Boolean  @default(false)
+
+  itens          AgendaItem[]
+  bloqueios      AgendaBloqueio[]
+  reservas       AgendaReserva[]
+
+  @@map("agenda")
+}
+
+// ─── AGENDA ITEM ─────────────────────────────────────────────────
+
+model AgendaItem {
+  id_agenda_item            Int       @id @default(autoincrement())
+  dt_inicio                 DateTime
+  dt_fim                    DateTime
+  tx_observacao             String?   @db.Text
+  cd_status                 String    @default("AGENDADO") @db.VarChar(20)
+  fl_ativo                  Boolean   @default(true)
+  dt_criacao                DateTime  @default(now())
+  id_unidade_atendimento    Int?
+  vl_duracao                Int?
+  vl_sala                   Int?
+  id_status                 Int?
+  id_tipo                   Int?
+  tx_descricao              String?   @db.VarChar(200)
+  tx_descricao2             String?   @db.VarChar(200)
+  id_motivo_agendamento     String?   @db.VarChar(50)
+  id_pt_item                Int?
+  id_tipo_fone1             String?   @db.VarChar(20)
+  tx_fone_ddd1              String?   @db.VarChar(4)
+  tx_fone_nro1              String?   @db.VarChar(20)
+  id_tipo_fone2             String?   @db.VarChar(20)
+  tx_fone_ddd2              String?   @db.VarChar(4)
+  tx_fone_nro2              String?   @db.VarChar(20)
+  id_operadora              Int?
+  id_pt_header              Int?
+  fl_bloqueio               Boolean   @default(false)
+  fl_ocultar                Boolean   @default(false)
+  fl_copiar                 Boolean   @default(false)
+  id_copia_tipo             Int?
+  vl_copia_dia              Int?
+  vl_copia_semana           Int?
+  vl_copia_mes              Int?
+  fl_elegibilidade          Boolean?
+  fl_enviar_sms             Boolean?
+  dt_time_stamp_checkin     DateTime?
+  dt_time_stamp_atendimento DateTime?
+  dt_time_stamp_checkout    DateTime?
+  vl_rgb                    String?   @db.VarChar(20)
+  id_turma                  Int?
+  id_disciplina             Int?
+  id_curso                  Int?
+
+  id_agenda    Int
+  agenda       Agenda    @relation(fields: [id_agenda], references: [id_agenda])
+  id_paciente  Int
+  paciente     Paciente  @relation(fields: [id_paciente], references: [id_paciente])
+  id_prestador Int
+  prestador    Prestador @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta     Int
+  conta        Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  tx_elegibilidade          String?  @db.Text
+  tx_elegibilidade_glosa    String?  @db.Text
+  tx_google_event           String?  @db.VarChar(200)
+  id_pt_planejamento_sessao Int?
+  vl_copia_dia_1            Int?
+  vl_copia_dia_2            Int?
+  vl_copia_dia_3            Int?
+  tx_enviar_sms             String?  @db.VarChar(200)
+  tx_origem_agendamento     String?  @db.VarChar(100)
+
+  @@map("agenda_item")
+}
+
+// ─── ESPECIALIDADE ───────────────────────────────────────────────
+
+model Especialidade {
+  id_especialidade Int      @id @default(autoincrement())
+  tx_descricao     String   @db.VarChar(200)
+  fl_ativo         Boolean  @default(true)
+  dt_criacao       DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  prestadores    Prestador[]
+  procedimentos  ProcedimentoItem[]
+  ptItens        PtItem[]
+  regrasComissao RegraComissao[]
+
+  @@map("especialidade")
+}
+
+// ─── CONVENIO ────────────────────────────────────────────────────
+
+model Convenio {
+  id_convenio  Int      @id @default(autoincrement())
+  tx_descricao String   @db.VarChar(200)
+  fl_ativo     Boolean  @default(true)
+  dt_criacao   DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  cd_convenio          String?  @db.VarChar(50)
+  cd_ans_operadora     String?  @db.VarChar(50)
+  id_operadora         Int?
+  id_tab_prc           Int?
+  id_tipo_convenio     Int?
+  fl_regras_cobertura  Boolean  @default(false)
+  fl_regras_repasse    Boolean  @default(false)
+  tx_cnpj_operadora    String?  @db.VarChar(18)
+  tx_nome_operadora    String?  @db.VarChar(200)
+  tx_razao_operadora   String?  @db.VarChar(200)
+  tx_regras_cobertura  String?  @db.Text
+  tx_regras_repasse    String?  @db.Text
+  tx_tabela_padrao     String?  @db.VarChar(200)
+
+  credenciamentos Credenciamento[]
+
+  @@map("convenio")
+}
+
+// ─── APP MODULO ──────────────────────────────────────────────────
+
+model AppModulo {
+  id_modulo    Int      @id @default(autoincrement())
+  tx_descricao String   @db.VarChar(200)
+  tx_alias     String?  @db.VarChar(100)
+  nr_ordem     Int      @default(0)
+  id_grupo     Int?
+  tx_icone     String?  @db.VarChar(50)
+  fl_ativo     Boolean  @default(true)
+
+  id_conta Int?
+  conta    Conta? @relation(fields: [id_conta], references: [id_conta])
+
+  permissoes LoginPermissao[]
+
+  @@map("app_modulo")
+}
+
+// ─── LOGIN PERMISSAO ─────────────────────────────────────────────
+
+model LoginPermissao {
+  id_login_permissao Int     @id @default(autoincrement())
+  fl_consultar       Boolean @default(false)
+  fl_inserir         Boolean @default(false)
+  fl_alterar         Boolean @default(false)
+  fl_excluir         Boolean @default(false)
+
+  id_usuario Int
+  usuario    Usuario @relation(fields: [id_usuario], references: [id_usuario])
+
+  id_modulo Int
+  modulo    AppModulo @relation(fields: [id_modulo], references: [id_modulo])
+
+  @@unique([id_usuario, id_modulo])
+  @@map("login_permissao")
+}
+
+// ─── SESSAO ──────────────────────────────────────────────────────
+
+model Sessao {
+  id_sessao    Int      @id @default(autoincrement())
+  dt_login     DateTime @default(now())
+  dt_expiracao DateTime
+  fl_ativo     Boolean  @default(true)
+
+  id_usuario Int
+  usuario    Usuario @relation(fields: [id_usuario], references: [id_usuario])
+
+  id_conta Int
+
+  @@map("sessao")
+}
+
+// ─── UNIDADE DE ATENDIMENTO ──────────────────────────────────────
+
+model UnidadeAtendimento {
+  id_unidade_atendimento Int      @id @default(autoincrement())
+  tx_descricao           String   @db.VarChar(200)
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  tratamentos  Tratamento[]
+  recebimentos Recebimento[]
+  despesas     Despesa[]
+
+  @@map("unidade_atendimento")
+}
+
+// ─── FORNECEDOR ──────────────────────────────────────────────────
+
+model Fornecedor {
+  id_fornecedor          Int      @id @default(autoincrement())
+  tx_nome                String   @db.VarChar(200)
+  tx_razao_social        String?  @db.VarChar(200)
+  tx_cnpj                String?  @db.VarChar(18)
+  id_segmento_fornecedor String?  @db.VarChar(100)
+  id_tipo_fone1          String?  @db.VarChar(20)
+  tx_fone_ddd1           String?  @db.VarChar(3)
+  tx_fone_nro1           String?  @db.VarChar(20)
+  tx_fone_ram1           String?  @db.VarChar(10)
+  id_tipo_fone2          String?  @db.VarChar(20)
+  tx_fone_ddd2           String?  @db.VarChar(3)
+  tx_fone_nro2           String?  @db.VarChar(20)
+  tx_fone_ram2           String?  @db.VarChar(10)
+  id_tipo_email1         String?  @db.VarChar(20)
+  tx_email1              String?  @db.VarChar(200)
+  tx_observacoes         String?  @db.Text
+  tx_cep                 String?  @db.VarChar(10)
+  id_tipo_logradouro     String?  @db.VarChar(10)
+  tx_endereco            String?  @db.VarChar(200)
+  tx_numero              String?  @db.VarChar(10)
+  tx_complemento         String?  @db.VarChar(50)
+  id_uf                  String?  @db.VarChar(2)
+  id_cidade              String?  @db.VarChar(100)
+  id_bairro              String?  @db.VarChar(100)
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  tx_apelido             String?  @db.VarChar(100)
+  tx_ie                  String?  @db.VarChar(30)
+  tx_homepage            String?  @db.VarChar(500)
+  tx_dados_pagamento     String?  @db.Text
+  tx_foto                String?  @db.Text
+  id_tipo_endereco       String?  @db.VarChar(20)
+  tx_referencia          String?  @db.VarChar(100)
+
+  despesas Despesa[]
+
+  @@map("fornecedor")
+}
+
+// ─── CONTA BANCÁRIA ──────────────────────────────────────────────
+
+model ContaBancaria {
+  id_cpagar_conta        Int      @id @default(autoincrement())
+  tx_nome_conta          String   @db.VarChar(200)
+  id_banco               String?  @db.VarChar(100)
+  tx_agencia             String?  @db.VarChar(20)
+  tx_conta               String?  @db.VarChar(30)
+  tx_dv_conta            String?  @db.VarChar(5)
+  id_tipo_conta_bancaria String?  @db.VarChar(30)
+  tx_nome_titular        String?  @db.VarChar(200)
+  tx_cnpj_titular        String?  @db.VarChar(18)
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_prestador Int?
+  prestador    Prestador? @relation(fields: [id_prestador], references: [id_prestador])
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  recebimentos Recebimento[]
+  despesas     Despesa[]
+  receberCrs   ReceberCR[]
+  fluxosCaixa  FluxoCaixa[]
+
+  @@map("conta_bancaria")
+}
+
+// ─── CATEGORIA FINANCEIRA ────────────────────────────────────────
+
+model CategoriaConta {
+  id_categoria_conta Int      @id @default(autoincrement())
+  tx_descricao       String   @db.VarChar(200)
+  cd_tipo            String?  @db.VarChar(20)
+  id_grupo           Int?
+  fl_ativo           Boolean  @default(true)
+  dt_criacao         DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  recebimentos Recebimento[]
+  despesas     Despesa[]
+  receberCrs   ReceberCR[]
+  fluxosCaixa  FluxoCaixa[]
+
+  @@map("categoria_conta")
+}
+
+// ─── TRATAMENTO (pt_header) ──────────────────────────────────────
+
+model Tratamento {
+  id_pt_header                    Int       @id @default(autoincrement())
+  dt_inicio                       DateTime
+  cd_situacao                     String    @default("ATIVO") @db.VarChar(20)
+  id_beneficio                    String?   @db.VarChar(100)
+  id_tab_prc                      Int?
+  id_moeda                        String?   @db.VarChar(10)
+  id_tipo_faturamento_tratamento  String?   @db.VarChar(50)
+  id_tipo_atendimento             String?   @db.VarChar(50)
+  tx_observacoes                  String?   @db.Text
+  id_tipo_arcada                  String?   @db.VarChar(30)
+  id_prestador_sol                Int?
+  id_prestador_exe                Int?
+  dt_autorizacao                  DateTime?
+  tx_numero_guia                  String?   @db.VarChar(50)
+  tx_senha_convenio               String?   @db.VarChar(50)
+  dt_validade_senha               DateTime?
+  id_sinais_doenca                String?   @db.VarChar(100)
+  id_tecidos_moles                String?   @db.VarChar(100)
+  fl_ativo                        Boolean   @default(true)
+  dt_criacao                      DateTime  @default(now())
+  dt_abertura                     DateTime?
+  dt_finalizacao                  DateTime?
+  dt_vencimento                   DateTime?
+  id_credenciamento               Int?
+  id_especialidade                Int?
+  id_operadora                    Int?
+  id_cpagar_conta                 Int?
+  id_categoria_conta              Int?
+  id_tipo_pagto                   String?   @db.VarChar(50)
+  id_prestador_orc                Int?
+  id_status_pt_header             Int?
+  id_status_guia                  Int?
+  cd_associado                    String?   @db.VarChar(50)
+  tx_anotacoes                    String?   @db.Text
+  fl_imagem                       Boolean   @default(false)
+  fl_assinatura                   Boolean   @default(false)
+  fl_carrega_parcela              Boolean   @default(false)
+  fl_copia_pendente               Boolean   @default(false)
+  id_motivo_finalizacao           Int?
+  tx_mensagem_impressao           String?   @db.Text
+  vl_tot_atu                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_pac                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_dif                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_par                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_pag                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_des                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_cor                      Decimal?  @db.Decimal(12, 2)
+  vl_tot_sld                      Decimal?  @db.Decimal(12, 2)
+
+  id_prestador_crd       Int
+  prestador              Prestador          @relation(fields: [id_prestador_crd], references: [id_prestador])
+  id_paciente            Int
+  paciente               Paciente           @relation(fields: [id_paciente], references: [id_paciente])
+  id_unidade_atendimento Int?
+  unidade                UnidadeAtendimento? @relation(fields: [id_unidade_atendimento], references: [id_unidade_atendimento])
+  id_conta               Int
+  conta                  Conta              @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  cd_status_pt_header      String?  @db.VarChar(50)
+  dt_autorizacao_tiss      DateTime?
+  dt_venda                 DateTime?
+  fl_calc_diff             Boolean  @default(false)
+  fl_cadastro              Boolean  @default(false)
+  fl_aniversario           Boolean  @default(false)
+  fl_anotacao              Boolean  @default(false)
+  fl_debito                Boolean  @default(false)
+  fl_agenda_retorno        Boolean  @default(false)
+  tx_motivo_exclusao       String?  @db.Text
+  tx_codigo                String?  @db.VarChar(50)
+
+  recebimentos Recebimento[]
+  ptItens      PtItem[]
+  ptArcadas    PtArcada[]
+  receberCrs   ReceberCR[]
+
+  @@map("tratamento")
+}
+
+// ─── PT ITEM (procedimento do tratamento) ────────────────────────
+
+model PtItem {
+  id_pt_item             Int       @id @default(autoincrement())
+  id_tab_prc_item        Int?
+  id_tab_prc             Int?
+  id_status              Int?
+  cd_status              String?   @db.VarChar(20)
+  vl_sequencia           Int?
+  tx_faces               String?   @db.VarChar(50)
+  tx_regiao              String?   @db.VarChar(100)
+  tx_observacoes         String?   @db.Text
+  dt_finalizacao         DateTime?
+  fl_ativo               Boolean   @default(true)
+  fl_autorizado          Boolean   @default(false)
+  id_glosa               Int?
+  cd_glosa               String?   @db.VarChar(50)
+  id_cobertura           Int?
+  vl_pac                 Decimal?  @db.Decimal(12, 2)
+  vl_rep                 Decimal?  @db.Decimal(12, 2)
+  vl_qtd_us_pac          Decimal?  @db.Decimal(12, 4)
+  vl_qtd_us_rep          Decimal?  @db.Decimal(12, 4)
+  vl_us_pac              Decimal?  @db.Decimal(12, 4)
+  vl_us_rep              Decimal?  @db.Decimal(12, 4)
+  id_tipo_marcacao       Int?
+  vl_bmp_dentes          Int?
+  vl_bmp_faces           Int?
+  id_simbolo             Int?
+  id_operadora           Int?
+  fl_particular          Boolean   @default(false)
+  vl_tempo_sessao        Int?
+  fl_recorrente          Boolean   @default(false)
+  vl_glo                 Decimal?  @db.Decimal(12, 2)
+  vl_perc_des            Decimal?  @db.Decimal(5, 2)
+  vl_des                 Decimal?  @db.Decimal(12, 2)
+  vl_tot                 Decimal?  @db.Decimal(12, 2)
+  vl_orc                 Decimal?  @db.Decimal(12, 2)
+  vl_dur                 Int?
+  vl_cst_prt             Decimal?  @db.Decimal(12, 2)
+  vl_cst_mat             Decimal?  @db.Decimal(12, 2)
+  vl_cst_out             Decimal?  @db.Decimal(12, 2)
+  vl_cst_tot             Decimal?  @db.Decimal(12, 2)
+  fl_orcamento           Boolean   @default(false)
+  fl_finaliza            Boolean   @default(false)
+  id_fase_procedimento   Int?
+  id_agenda_item         Int?
+  fl_regiao_prc          Boolean   @default(false)
+  fl_assinatura          Boolean   @default(false)
+  dt_criacao             DateTime  @default(now())
+
+  id_pt_header    Int
+  tratamento      Tratamento     @relation(fields: [id_pt_header], references: [id_pt_header])
+  id_prestador_exe Int?
+  prestador       Prestador?     @relation(fields: [id_prestador_exe], references: [id_prestador])
+  id_especialidade Int?
+  especialidade   Especialidade? @relation(fields: [id_especialidade], references: [id_especialidade])
+  id_conta        Int
+  conta           Conta          @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  cd_tab_prc_item           String?   @db.VarChar(20)
+  id_pt_item_endo           Int?
+  id_pt_planejamento_sessao Int?
+  qtd_prc                   Int?
+  vl_mar                    Decimal?  @db.Decimal(12, 2)
+  vl_luc                    Decimal?  @db.Decimal(12, 2)
+  dt_time_stamp_checkin     DateTime?
+  dt_time_stamp_atendimento DateTime?
+  dt_time_stamp_checkout    DateTime?
+  tx_historico              String?   @db.VarChar(500)
+  tx_codigo                 String?   @db.VarChar(50)
+  tx_numero_guia            String?   @db.VarChar(50)
+
+  @@map("pt_item")
+}
+
+// ─── PT ARCADA (odontograma) ─────────────────────────────────────
+
+model PtArcada {
+  id_pt_arcada Int @id @default(autoincrement())
+
+  id_pt_header Int
+  tratamento   Tratamento @relation(fields: [id_pt_header], references: [id_pt_header])
+
+  dentes PtArcadaDente[]
+
+  @@map("pt_arcada")
+}
+
+model PtArcadaDente {
+  id_pt_arcada_dente Int     @id @default(autoincrement())
+  vl_dente           Int?
+  vl_face            Int?
+  vl_simbolo         Int?
+  fl_ativo           Boolean @default(true)
+
+  id_pt_arcada Int
+  ptArcada     PtArcada @relation(fields: [id_pt_arcada], references: [id_pt_arcada])
+
+  @@map("pt_arcada_dente")
+}
+
+// ─── TABELA DE PROCEDIMENTOS ─────────────────────────────────────
+
+model TabelaProcedimento {
+  id_tab_prc   Int      @id @default(autoincrement())
+  tx_descricao String   @db.VarChar(200)
+  fl_ativo     Boolean  @default(true)
+  dt_criacao   DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  itens ProcedimentoItem[]
+
+  @@map("tabela_procedimento")
+}
+
+model ProcedimentoItem {
+  id_tab_prc_item  Int      @id @default(autoincrement())
+  tx_nome          String   @db.VarChar(300)
+  cd_tab_prc_item  String?  @db.VarChar(20)
+  id_tab_gen_item  String?  @db.VarChar(100)
+  vl_pac           Decimal? @db.Decimal(12, 2)
+  vl_rep           Decimal? @db.Decimal(12, 2)
+  id_tipo_cal_prc  String?  @db.VarChar(30)
+  vl_tempo         Int?
+  fl_favorito      Boolean  @default(false)
+  fl_ativo         Boolean  @default(true)
+  dt_criacao       DateTime @default(now())
+
+  id_tab_prc       Int
+  tabela           TabelaProcedimento @relation(fields: [id_tab_prc], references: [id_tab_prc])
+  id_especialidade Int?
+  especialidade    Especialidade?     @relation(fields: [id_especialidade], references: [id_especialidade])
+
+  regrasComissao RegraComissao[]
+
+  @@map("procedimento_item")
+}
+
+// ─── TABELA DE MATERIAIS ─────────────────────────────────────────
+
+model TabelaMaterial {
+  id_tab_mat   Int      @id @default(autoincrement())
+  tx_descricao String   @db.VarChar(200)
+  fl_ativo     Boolean  @default(true)
+  dt_criacao   DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  itens MaterialItem[]
+
+  @@map("tabela_material")
+}
+
+model MaterialItem {
+  id_tab_mat_item   Int      @id @default(autoincrement())
+  tx_nome           String   @db.VarChar(200)
+  tx_codigo         String?  @db.VarChar(30)
+  id_grupo_material String?  @db.VarChar(100)
+  id_tab_mat_gen_item String? @db.VarChar(100)
+  id_unid_consumo   String?  @db.VarChar(30)
+  vl_qtd_min        Decimal? @db.Decimal(12, 2)
+  tx_observacoes    String?  @db.Text
+  fl_ativo          Boolean  @default(true)
+  dt_criacao        DateTime @default(now())
+
+  id_tab_mat Int
+  tabela     TabelaMaterial @relation(fields: [id_tab_mat], references: [id_tab_mat])
+
+  estoqueItens EstoqueItem[]
+
+  @@map("material_item")
+}
+
+// ─── MEDICAMENTO ─────────────────────────────────────────────────
+
+model Medicamento {
+  id_medicamento          Int      @id @default(autoincrement())
+  tx_nome_medicamento     String   @db.VarChar(200)
+  id_classe_terapeutica   String?  @db.VarChar(100)
+  id_tipo_uso_medicamento String?  @db.VarChar(50)
+  id_via_uso_medicamento  String?  @db.VarChar(50)
+  tx_posologia            String?  @db.Text
+  tx_quantidade           String?  @db.VarChar(50)
+  tx_observacoes          String?  @db.Text
+  fl_ativo                Boolean  @default(true)
+  dt_criacao              DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("medicamento")
+}
+
+// ─── RECEBIMENTO (receber_db) ────────────────────────────────────
+
+model Recebimento {
+  id_receber_db          Int       @id @default(autoincrement())
+  id_tipo_receita        String?   @db.VarChar(50)
+  dt_vencimento          DateTime
+  tx_historico           String?   @db.VarChar(500)
+  vl_debito              Decimal   @db.Decimal(12, 2)
+  vl_credito             Decimal   @default(0) @db.Decimal(12, 2)
+  id_tipo_pagto          String?   @db.VarChar(50)
+  fl_pago                Boolean   @default(false)
+  id_mes_competencia     String?   @db.VarChar(20)
+  vl_ano_competencia     Int?
+  vl_meses_copia         Int?      @default(1)
+  fl_ativo               Boolean   @default(true)
+  dt_criacao             DateTime  @default(now())
+  id_prestador           Int?
+  id_pt_parcela          Int?
+  nr_parcela             Int?
+  vl_tot_credito         Decimal?  @db.Decimal(12, 2)
+  vl_tot_taxa_cobranca   Decimal?  @db.Decimal(12, 2)
+  vl_tot_desconto        Decimal?  @db.Decimal(12, 2)
+  vl_tot_mora            Decimal?  @db.Decimal(12, 2)
+  vl_tot_multa           Decimal?  @db.Decimal(12, 2)
+  vl_tot_pagamento       Decimal?  @db.Decimal(12, 2)
+  vl_saldo               Decimal?  @db.Decimal(12, 2)
+  fl_debito_aberto       Boolean   @default(true)
+  fl_faturar             Boolean   @default(false)
+  fl_recorrente          Boolean   @default(false)
+  id_prestador_pg        Int?
+  id_fornecedor_pg       Int?
+  id_operadora_pg        Int?
+  tx_nro_nf              String?   @db.VarChar(50)
+  id_cartao_transacao    Int?
+
+  id_paciente            Int?
+  paciente               Paciente?          @relation(fields: [id_paciente], references: [id_paciente])
+  id_pt_header           Int?
+  tratamento             Tratamento?        @relation(fields: [id_pt_header], references: [id_pt_header])
+  id_unidade_atendimento Int?
+  unidade                UnidadeAtendimento? @relation(fields: [id_unidade_atendimento], references: [id_unidade_atendimento])
+  id_categoria_conta     Int?
+  categoria              CategoriaConta?    @relation(fields: [id_categoria_conta], references: [id_categoria_conta])
+  id_cpagar_conta        Int?
+  contaBancaria          ContaBancaria?     @relation(fields: [id_cpagar_conta], references: [id_cpagar_conta])
+  id_conta               Int
+  conta                  Conta              @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  vl_pago                    Decimal?  @db.Decimal(12, 2)
+  cd_tipo_pagto              String?   @db.VarChar(50)
+  id_checkout_cobranca       Int?
+  id_checkout_cobranca_parcela Int?
+  cd_checkout_status         String?   @db.VarChar(50)
+  cd_checkout_tipo           String?   @db.VarChar(50)
+  cd_checkout_tipo_gateway   String?   @db.VarChar(50)
+  id_last_creceber_cr        Int?
+  fl_recebimento_pago        Boolean   @default(false)
+  tx_nosso_numero            String?   @db.VarChar(50)
+  tx_faturamento             String?   @db.VarChar(200)
+  tx_transacao_numero        String?   @db.VarChar(100)
+
+  receberCrs ReceberCR[]
+
+  @@map("recebimento")
+}
+
+// ─── RECEBER CR (créditos/pagamentos) ────────────────────────────
+
+model ReceberCR {
+  id_creceber_cr         Int       @id @default(autoincrement())
+  dt_pagto               DateTime?
+  dt_compensacao         DateTime?
+  vl_pagamento           Decimal?  @db.Decimal(12, 2)
+  vl_credito             Decimal?  @db.Decimal(12, 2)
+  vl_desconto            Decimal?  @db.Decimal(12, 2)
+  vl_taxa_cobranca       Decimal?  @db.Decimal(12, 2)
+  vl_multa               Decimal?  @db.Decimal(12, 2)
+  vl_mora                Decimal?  @db.Decimal(12, 2)
+  tx_historico           String?   @db.VarChar(500)
+  tx_nrovenda            String?   @db.VarChar(30)
+  id_recibo              Int?
+  id_tipo_pagto          String?   @db.VarChar(50)
+  id_tipo_cal_taxa_cobranca Int?
+  fl_ativo               Boolean   @default(true)
+  dt_criacao             DateTime  @default(now())
+  id_fluxo_caixa         Int?
+
+  id_creceber_db  Int
+  recebimento     Recebimento    @relation(fields: [id_creceber_db], references: [id_receber_db])
+  id_cpagar_conta Int?
+  contaBancaria   ContaBancaria? @relation(fields: [id_cpagar_conta], references: [id_cpagar_conta])
+  id_pt_header    Int?
+  tratamento      Tratamento?    @relation(fields: [id_pt_header], references: [id_pt_header])
+  id_paciente     Int?
+  paciente        Paciente?      @relation(fields: [id_paciente], references: [id_paciente])
+  id_categoria_conta Int?
+  categoria       CategoriaConta? @relation(fields: [id_categoria_conta], references: [id_categoria_conta])
+  id_prestador    Int?
+  prestador       Prestador?     @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta        Int
+  conta           Conta          @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  cd_tipo_pagto      String?  @db.VarChar(50)
+  vl_multa_perc      Decimal? @db.Decimal(5, 2)
+  vl_mora_perc       Decimal? @db.Decimal(5, 2)
+  id_tipo_mora       Int?
+  vl_mora_calc       Decimal? @db.Decimal(12, 2)
+  vl_debito          Decimal? @db.Decimal(12, 2)
+  vl_saldo           Decimal? @db.Decimal(12, 2)
+  vl_dias_atraso     Int?
+  dt_vencimento_db   DateTime?
+  id_creceber_cr_upd Int?
+  vl_ano_competencia Int?
+
+  cartoesTransacao CartaoTransacao[]
+
+  @@map("receber_cr")
+}
+
+// ─── DESPESA (cpagar_db) ─────────────────────────────────────────
+
+model Despesa {
+  id_cpagar_db           Int       @id @default(autoincrement())
+  id_tipo_despesa        String?   @db.VarChar(50)
+  dt_vencimento          DateTime
+  tx_documento           String?   @db.VarChar(100)
+  tx_historico           String?   @db.VarChar(500)
+  vl_despesa             Decimal   @db.Decimal(12, 2)
+  vl_pago                Decimal   @default(0) @db.Decimal(12, 2)
+  id_tipo_pagto          String?   @db.VarChar(50)
+  fl_pago                Boolean   @default(false)
+  id_mes_competencia     String?   @db.VarChar(20)
+  vl_ano_competencia     Int?
+  vl_meses_copia         Int?      @default(1)
+  fl_ativo               Boolean   @default(true)
+  dt_criacao             DateTime  @default(now())
+  id_prestador_cr        Int?
+  id_paciente_cr         Int?
+  id_operadora_cr        Int?
+  fl_possui_anexo        Boolean   @default(false)
+  vl_tot_multa           Decimal?  @db.Decimal(12, 2)
+  vl_tot_mora            Decimal?  @db.Decimal(12, 2)
+  vl_tot_desconto        Decimal?  @db.Decimal(12, 2)
+  vl_tot_pagamento       Decimal?  @db.Decimal(12, 2)
+  vl_saldo_dia           Decimal?  @db.Decimal(12, 2)
+
+  id_fornecedor          Int?
+  fornecedor             Fornecedor?        @relation(fields: [id_fornecedor], references: [id_fornecedor])
+  id_unidade_atendimento Int?
+  unidade                UnidadeAtendimento? @relation(fields: [id_unidade_atendimento], references: [id_unidade_atendimento])
+  id_categoria_conta     Int?
+  categoria              CategoriaConta?    @relation(fields: [id_categoria_conta], references: [id_categoria_conta])
+  id_cpagar_conta        Int?
+  contaBancaria          ContaBancaria?     @relation(fields: [id_cpagar_conta], references: [id_cpagar_conta])
+  id_conta               Int
+  conta                  Conta              @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("despesa")
+}
+
+// ─── FLUXO DE CAIXA ──────────────────────────────────────────────
+
+model FluxoCaixa {
+  id_lancamento          Int       @id @default(autoincrement())
+  id_tipo_lancamento     Int?
+  dt_lancamento          DateTime
+  vl_valor               Decimal   @db.Decimal(12, 2)
+  vl_saldo               Decimal?  @db.Decimal(12, 2)
+  cd_tipo_pagto          String?   @db.VarChar(50)
+  id_creceber_cr         Int?
+  id_cpagar_cr           Int?
+  tx_historico           String?   @db.VarChar(500)
+  fl_ativo               Boolean   @default(true)
+  fl_multiplas_contas    Boolean   @default(false)
+  tx_documento           String?   @db.VarChar(100)
+  id_lancamento_origem   Int?
+  dt_criacao             DateTime  @default(now())
+  id_cpagar_conta_destino Int?
+
+  id_categoria_conta Int?
+  categoria          CategoriaConta? @relation(fields: [id_categoria_conta], references: [id_categoria_conta])
+  id_cpagar_conta    Int?
+  contaBancaria      ContaBancaria?  @relation(fields: [id_cpagar_conta], references: [id_cpagar_conta])
+  id_prestador       Int?
+  prestador          Prestador?      @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta           Int
+  conta              Conta           @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  tx_nome_pagante_creditado String?  @db.VarChar(200)
+  tx_full_search            String?  @db.Text
+  tx_nr_nfe                 String?  @db.VarChar(50)
+  tx_nr_recibo              String?  @db.VarChar(50)
+
+  @@map("fluxo_caixa")
+}
+
+// ─── RETORNO ─────────────────────────────────────────────────────
+
+model Retorno {
+  id_retorno     Int      @id @default(autoincrement())
+  vl_mes         String?  @db.VarChar(20)
+  vl_ano         Int?
+  id_motivo      String?  @db.VarChar(100)
+  tx_observacoes String?  @db.Text
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_prestador Int
+  prestador    Prestador @relation(fields: [id_prestador], references: [id_prestador])
+  id_paciente  Int
+  paciente     Paciente  @relation(fields: [id_paciente], references: [id_paciente])
+  id_conta     Int
+  conta        Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  cd_motivo_retorno String?  @db.VarChar(50)
+  id_situacao       String?  @db.VarChar(20)
+
+  @@map("retorno")
+}
+
+// ─── CREDENCIAMENTO ──────────────────────────────────────────────
+
+model Credenciamento {
+  id_credenciamento      Int      @id @default(autoincrement())
+  tx_codigo              String?  @db.VarChar(50)
+  id_tab_prc             Int?
+  vl_us                  Decimal? @db.Decimal(12, 4)
+  tx_alerta              String?  @db.Text
+  tx_observacoes         String?  @db.Text
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_prestador           Int
+  prestador              Prestador @relation(fields: [id_prestador], references: [id_prestador])
+  id_unidade_atendimento Int?
+  id_operadora           Int?
+  convenio               Convenio? @relation(fields: [id_operadora], references: [id_convenio])
+  id_conta               Int
+  conta                  Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("credenciamento")
+}
+
+// ─── ESTOQUE ─────────────────────────────────────────────────────
+
+model EstoqueItem {
+  id_estoque_item Int      @id @default(autoincrement())
+  vl_custo_medio  Decimal? @db.Decimal(12, 4)
+  vl_qtd_min      Decimal? @db.Decimal(12, 2)
+  vl_saldo        Decimal  @default(0) @db.Decimal(12, 2)
+  fl_ativo        Boolean  @default(true)
+  dt_criacao      DateTime @default(now())
+
+  id_tab_mat_item Int
+  materialItem    MaterialItem @relation(fields: [id_tab_mat_item], references: [id_tab_mat_item])
+  id_conta        Int
+  conta           Conta        @relation(fields: [id_conta], references: [id_conta])
+
+  movimentos EstoqueMovimento[]
+
+  @@map("estoque_item")
+}
+
+model EstoqueMovimento {
+  id_estoque_mov Int      @id @default(autoincrement())
+  cd_tipo        String   @db.VarChar(20)
+  vl_quantidade  Decimal  @db.Decimal(12, 2)
+  vl_custo_unit  Decimal? @db.Decimal(12, 4)
+  dt_validade    DateTime?
+  tx_fornecedor  String?  @db.VarChar(200)
+  tx_observacao  String?  @db.Text
+  fl_cancelado   Boolean  @default(false)
+  dt_criacao     DateTime @default(now())
+
+  id_estoque_item Int
+  estoqueItem     EstoqueItem @relation(fields: [id_estoque_item], references: [id_estoque_item])
+
+  @@map("estoque_movimento")
+}
+
+// ─── ANAMNESE ────────────────────────────────────────────────────
+
+model Anamnese {
+  id_anamnese          Int      @id @default(autoincrement())
+  tx_nome_questionario String?  @db.VarChar(200)
+  tx_nome_abreviado    String?  @db.VarChar(30)
+  tx_observacao        String?  @db.Text
+  fl_ativo             Boolean  @default(true)
+  fl_reservado         Boolean  @default(false)
+  id_tipo_copia        Int?
+  id_anamnese_copia    Int?
+  tx_subtitulo         String?  @db.VarChar(200)
+  dt_criacao           DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  itens AnamneseItem[]
+
+  @@map("anamnese")
+}
+
+model AnamneseItem {
+  id_anamnese_item    Int      @id @default(autoincrement())
+  id_cf_controle      Int?
+  tx_pergunta         String?  @db.Text
+  tx_itens_resposta   String?  @db.Text
+  fl_complemento      Boolean  @default(false)
+  tx_ajuda_complemento String? @db.Text
+  fl_alerta           Boolean  @default(false)
+  tx_itens_alerta     String?  @db.Text
+  tx_msg_alerta       String?  @db.Text
+  vl_ordem            Int?
+  fl_ativo            Boolean  @default(true)
+
+  id_anamnese Int
+  anamnese    Anamnese @relation(fields: [id_anamnese], references: [id_anamnese])
+
+  @@map("anamnese_item")
+}
+
+// ─── EDITOR TEXTO (templates SMS/docs) ───────────────────────────
+
+model EditorTexto {
+  id_editor_texto Int      @id @default(autoincrement())
+  tx_titulo       String?  @db.VarChar(200)
+  tx_conteudo     String?  @db.Text
+  cd_tipo         String?  @db.VarChar(50)
+  fl_ativo        Boolean  @default(true)
+  dt_criacao      DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("editor_texto")
+}
+
+// ─── DOCUMENTO (arquivos do paciente) ────────────────────────────
+
+model Documento {
+  id_documento   Int      @id @default(autoincrement())
+  tx_titulo      String?  @db.VarChar(200)
+  tx_tipo_arquivo String? @db.VarChar(50)
+  tx_url         String?  @db.Text
+  tx_observacao  String?  @db.Text
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_paciente Int?
+  paciente    Paciente? @relation(fields: [id_paciente], references: [id_paciente])
+  id_conta    Int
+  conta       Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("documento")
+}
+
+// ─── HISTORICO (timeline do paciente) ────────────────────────────
+
+model Historico {
+  id_historico   Int      @id @default(autoincrement())
+  tx_descricao   String?  @db.Text
+  cd_tipo        String?  @db.VarChar(50)
+  dt_data        DateTime @default(now())
+  fl_ativo       Boolean  @default(true)
+
+  id_paciente  Int?
+  paciente     Paciente?  @relation(fields: [id_paciente], references: [id_paciente])
+  id_prestador Int?
+  prestador    Prestador? @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta     Int
+  conta        Conta      @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("historico")
+}
+
+// ─── REGRA COMISSAO ──────────────────────────────────────────────
+
+model RegraComissao {
+  id_regra_comissao Int      @id @default(autoincrement())
+  cd_modalidade     String?  @db.VarChar(50)
+  vl_percentual     Decimal? @db.Decimal(5, 2)
+  vl_valor          Decimal? @db.Decimal(12, 2)
+  fl_ativo          Boolean  @default(true)
+  dt_criacao        DateTime @default(now())
+
+  id_prestador    Int?
+  prestador       Prestador?       @relation(fields: [id_prestador], references: [id_prestador])
+  id_tab_prc_item Int?
+  procedimento    ProcedimentoItem? @relation(fields: [id_tab_prc_item], references: [id_tab_prc_item])
+  id_especialidade Int?
+  especialidade   Especialidade?   @relation(fields: [id_especialidade], references: [id_especialidade])
+  id_conta        Int
+  conta           Conta            @relation(fields: [id_conta], references: [id_conta])
+
+  // --- campos adicionais RE-COMPLETA ---
+  dt_vigencia           DateTime?
+  id_operadora          Int?
+  id_tab_prc            Int?
+  id_tab_gen_item       String?  @db.VarChar(100)
+  id_tipo_cal_comissao  Int?
+  id_unidade_atendimento Int?
+  vl_comissao           Decimal? @db.Decimal(12, 2)
+
+  @@map("regra_comissao")
+}
+
+// ─── CARTAO TRANSACAO ────────────────────────────────────────────
+
+model CartaoTransacao {
+  id_cartao_transacao Int      @id @default(autoincrement())
+  tx_transacao        String?  @db.VarChar(100)
+  cd_bandeira         String?  @db.VarChar(50)
+  cd_tipo_cartao      String?  @db.VarChar(30)
+  vl_valor            Decimal? @db.Decimal(12, 2)
+  vl_taxa             Decimal? @db.Decimal(12, 4)
+  dt_transacao        DateTime?
+  fl_ativo            Boolean  @default(true)
+  dt_criacao          DateTime @default(now())
+
+  id_creceber_cr Int?
+  receberCr      ReceberCR? @relation(fields: [id_creceber_cr], references: [id_creceber_cr])
+  id_conta       Int
+  conta          Conta      @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("cartao_transacao")
+}
+
+// ─── PERFIL ──────────────────────────────────────────────────────
+
+model Perfil {
+  id_perfil    Int      @id @default(autoincrement())
+  tx_nome      String   @db.VarChar(200)
+  tx_descricao String?  @db.Text
+  fl_ativo     Boolean  @default(true)
+  dt_criacao   DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("perfil")
+}
+
+// ─── ESCOLA ──────────────────────────────────────────────────────
+
+model Escola {
+  id_escola         Int      @id @default(autoincrement())
+  tx_escola         String   @db.VarChar(200)
+  tx_razao_social   String?  @db.VarChar(200)
+  tx_cnpj           String?  @db.VarChar(18)
+  tx_escola_apelido String?  @db.VarChar(100)
+  tx_cep            String?  @db.VarChar(10)
+  id_tipo_logradouro String? @db.VarChar(5)
+  tx_endereco       String?  @db.VarChar(200)
+  tx_numero         String?  @db.VarChar(20)
+  tx_complemento    String?  @db.VarChar(100)
+  id_uf             String?  @db.VarChar(2)
+  id_cidade         String?  @db.VarChar(100)
+  id_bairro         String?  @db.VarChar(100)
+  fl_habilitado     Boolean  @default(true)
+  fl_ativo          Boolean  @default(true)
+  dt_criacao        DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  docentes    Docente[]
+  alunos      Aluno[]
+  cursos      Curso[]
+
+  @@map("escola")
+}
+
+model Docente {
+  id_docente         Int      @id @default(autoincrement())
+  tx_docente         String   @db.VarChar(200)
+  tx_cpf             String?  @db.VarChar(14)
+  tx_cro             String?  @db.VarChar(50)
+  id_cro_uf          String?  @db.VarChar(2)
+  tx_docente_apelido String?  @db.VarChar(100)
+  tx_matricula       String?  @db.VarChar(50)
+  id_tipo_fone       String?  @db.VarChar(20)
+  tx_fone_ddd        String?  @db.VarChar(3)
+  tx_fone_nro        String?  @db.VarChar(20)
+  id_tipo_email      String?  @db.VarChar(20)
+  tx_email           String?  @db.VarChar(200)
+  tx_login           String?  @db.VarChar(200)
+  fl_ativo           Boolean  @default(true)
+  dt_criacao         DateTime @default(now())
+
+  id_escola Int
+  escola    Escola @relation(fields: [id_escola], references: [id_escola])
+
+  @@map("docente")
+}
+
+model Aluno {
+  id_aluno         Int      @id @default(autoincrement())
+  tx_aluno         String   @db.VarChar(200)
+  tx_cpf           String?  @db.VarChar(14)
+  tx_aluno_apelido String?  @db.VarChar(100)
+  tx_matricula     String?  @db.VarChar(50)
+  id_tipo_fone     String?  @db.VarChar(20)
+  tx_fone_ddd      String?  @db.VarChar(3)
+  tx_fone_nro      String?  @db.VarChar(20)
+  id_tipo_email    String?  @db.VarChar(20)
+  tx_email         String?  @db.VarChar(200)
+  tx_login         String?  @db.VarChar(200)
+  fl_ativo         Boolean  @default(true)
+  dt_criacao       DateTime @default(now())
+
+  id_escola Int
+  escola    Escola @relation(fields: [id_escola], references: [id_escola])
+
+  @@map("aluno")
+}
+
+model Curso {
+  id_curso     Int      @id @default(autoincrement())
+  tx_nome      String   @db.VarChar(200)
+  tx_descricao String?  @db.Text
+  fl_ativo     Boolean  @default(true)
+  dt_criacao   DateTime @default(now())
+
+  id_escola Int
+  escola    Escola @relation(fields: [id_escola], references: [id_escola])
+
+  disciplinas Disciplina[]
+
+  @@map("curso")
+}
+
+model Disciplina {
+  id_disciplina Int      @id @default(autoincrement())
+  tx_nome       String   @db.VarChar(200)
+  tx_codigo     String?  @db.VarChar(30)
+  fl_ativo      Boolean  @default(true)
+  dt_criacao    DateTime @default(now())
+
+  id_curso Int
+  curso    Curso @relation(fields: [id_curso], references: [id_curso])
+
+  turmas Turma[]
+
+  @@map("disciplina")
+}
+
+model Turma {
+  id_turma    Int       @id @default(autoincrement())
+  tx_turma    String    @db.VarChar(100)
+  dt_inicio   DateTime?
+  dt_termino  DateTime?
+  fl_ativo    Boolean   @default(true)
+  dt_criacao  DateTime  @default(now())
+
+  id_disciplina Int
+  disciplina    Disciplina @relation(fields: [id_disciplina], references: [id_disciplina])
+
+  @@map("turma")
+}
+
+// ─── REPASSE (Comissao) ─────────────────────────────────────────
+
+model Repasse {
+  id_repasse              Int       @id @default(autoincrement())
+  id_modalidade_repasse   Int?
+  id_prestador            Int?
+  id_unidade_atendimento  Int?
+  dt_periodo_inicio       DateTime?
+  dt_periodo_fim          DateTime?
+  dt_credito              DateTime?
+  dt_efetivacao           DateTime?
+  vl_total                Decimal?  @db.Decimal(12, 2)
+  vl_bruto                Decimal?  @db.Decimal(12, 2)
+  vl_desconto             Decimal?  @db.Decimal(12, 2)
+  vl_acrescimo            Decimal?  @db.Decimal(12, 2)
+  tx_desconto             String?   @db.VarChar(200)
+  tx_acrescimo            String?   @db.VarChar(200)
+  tx_observacoes          String?   @db.Text
+  fl_ativo                Boolean   @default(true)
+  id_efetivar             Int?
+  id_conta_debito         Int?
+  id_categoria            Int?
+  id_forma_pagamento      Int?
+  id_repasse_efetiva      Int?
+  dt_criacao              DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("repasse")
+}
+
+// ─── GRUPO CONTA ────────────────────────────────────────────────
+
+model GrupoConta {
+  id_grupo_conta Int      @id @default(autoincrement())
+  tx_descricao   String   @db.VarChar(200)
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("grupo_conta")
+}
+
+// ─── CAMPO LIVRE ────────────────────────────────────────────────
+
+model CampoLivre {
+  id_campo_livre Int      @id @default(autoincrement())
+  tx_descricao   String   @db.VarChar(200)
+  cd_tipo        String?  @db.VarChar(50)
+  vl_ordem       Int?
+  fl_obrigatorio Boolean  @default(false)
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("campo_livre")
+}
+
+// ─── AGENDA BLOQUEIO ────────────────────────────────────────────
+
+model AgendaBloqueio {
+  id_agenda_bloqueio     Int       @id @default(autoincrement())
+  id_agenda              Int
+  agenda                 Agenda    @relation(fields: [id_agenda], references: [id_agenda])
+  id_unidade_atendimento Int?
+  dt_data_inicio         DateTime?
+  vl_hora_inicio         DateTime?
+  vl_hora_final          DateTime?
+  vl_frq_recorrencia     Int?
+  vl_lim_recorrencia     Int?
+  vl_qtd_recorrencia     Int?
+  dt_fin_recorrencia     DateTime?
+  dt_termino             DateTime?
+  tx_mensagem            String?   @db.Text
+  tx_recorrencia         String?   @db.VarChar(100)
+  fl_ativo               Boolean   @default(true)
+  dt_criacao             DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("agenda_bloqueio")
+}
+
+// ─── AGENDA RESERVA ─────────────────────────────────────────────
+
+model AgendaReserva {
+  id_agenda_reserva      Int       @id @default(autoincrement())
+  id_agenda              Int
+  agenda                 Agenda    @relation(fields: [id_agenda], references: [id_agenda])
+  id_unidade_atendimento Int?
+  dt_data_inicio         DateTime?
+  vl_hora_inicio         DateTime?
+  vl_hora_final          DateTime?
+  vl_frq_recorrencia     Int?
+  vl_lim_recorrencia     Int?
+  vl_qtd_recorrencia     Int?
+  dt_fin_recorrencia     DateTime?
+  dt_termino             DateTime?
+  tx_mensagem            String?   @db.Text
+  fl_ativo               Boolean   @default(true)
+  dt_criacao             DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("agenda_reserva")
+}
+
+// ─── BENEFICIO (paciente_beneficio) ─────────────────────────────
+
+model Beneficio {
+  id_beneficio       Int       @id @default(autoincrement())
+  id_paciente        Int?
+  id_operadora       Int?
+  id_produto         String?   @db.VarChar(50)
+  id_tab_prc         Int?
+  tx_matricula       String?   @db.VarChar(30)
+  tx_titular         String?   @db.VarChar(200)
+  tx_empresa         String?   @db.VarChar(200)
+  dt_validade        DateTime?
+  fl_ativo           Boolean   @default(true)
+  dt_criacao         DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("paciente_beneficio")
+}
+
+// ─── PAGAR CR (pagamentos de despesa) ───────────────────────────
+
+model PagarCR {
+  id_cpagar_cr       Int       @id @default(autoincrement())
+  id_cpagar_db       Int?
+  id_cpagar_conta    Int?
+  id_categoria_conta Int?
+  id_tipo_pagto      String?   @db.VarChar(50)
+  dt_pagto           DateTime?
+  dt_compensacao     DateTime?
+  vl_pagamento       Decimal?  @db.Decimal(12, 2)
+  vl_desconto        Decimal?  @db.Decimal(12, 2)
+  vl_multa           Decimal?  @db.Decimal(12, 2)
+  vl_mora            Decimal?  @db.Decimal(12, 2)
+  tx_historico       String?   @db.VarChar(500)
+  id_fluxo_caixa     Int?
+  fl_ativo           Boolean   @default(true)
+  dt_criacao         DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("cpagar_cr")
+}
+
+// ─── SERVICO PROTESE ────────────────────────────────────────────
+
+model ServicoProtese {
+  id_servico_protese   Int       @id @default(autoincrement())
+  id_pt_item           Int?
+  id_pt_header         Int?
+  id_fornecedor        Int?
+  id_prestador         Int?
+  dt_envio             DateTime?
+  dt_previsao          DateTime?
+  dt_retorno           DateTime?
+  vl_custo             Decimal?  @db.Decimal(12, 2)
+  vl_valor             Decimal?  @db.Decimal(12, 2)
+  tx_descricao         String?   @db.VarChar(500)
+  tx_observacoes       String?   @db.Text
+  cd_status            String?   @db.VarChar(50)
+  fl_ativo             Boolean   @default(true)
+  dt_criacao           DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("servico_protese")
+}
+
+// ─── PACIENTE ENDERECO ──────────────────────────────────────────
+
+model PacienteEndereco {
+  id_pessoa_endereco Int      @id @default(autoincrement())
+  id_tipo_endereco   Int?
+  id_tipo_logradouro Int?
+  tx_cep             String?  @db.VarChar(10)
+  tx_endereco        String?  @db.VarChar(200)
+  tx_numero          String?  @db.VarChar(10)
+  tx_complemento     String?  @db.VarChar(100)
+  tx_referencia      String?  @db.VarChar(200)
+  id_uf              Int?
+  id_cidade          Int?
+  id_bairro          Int?
+  fl_ativo           Boolean  @default(true)
+  dt_criacao         DateTime @default(now())
+
+  id_paciente Int
+  paciente    Paciente @relation(fields: [id_paciente], references: [id_paciente])
+  id_conta    Int
+  conta       Conta    @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("paciente_endereco")
+}
+
+// ─── PACIENTE FONE ──────────────────────────────────────────────
+
+model PacienteFone {
+  id_pessoa_fone Int      @id @default(autoincrement())
+  id_tipo_fone   Int?
+  tx_fone_ddd    String?  @db.VarChar(4)
+  tx_fone_nro    String?  @db.VarChar(20)
+  tx_fone_ram    String?  @db.VarChar(10)
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_paciente Int
+  paciente    Paciente @relation(fields: [id_paciente], references: [id_paciente])
+  id_conta    Int
+  conta       Conta    @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("paciente_fone")
+}
+
+// ─── PACIENTE EMAIL ─────────────────────────────────────────────
+
+model PacienteEmail {
+  id_pessoa_email Int      @id @default(autoincrement())
+  id_tipo_email   Int?
+  tx_email        String?  @db.VarChar(200)
+  fl_ativo        Boolean  @default(true)
+  dt_criacao      DateTime @default(now())
+
+  id_paciente Int
+  paciente    Paciente @relation(fields: [id_paciente], references: [id_paciente])
+  id_conta    Int
+  conta       Conta    @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("paciente_email")
+}
+
+// ─── PACIENTE BENEFICIO (plano/convênio) ────────────────────────
+
+model PacienteBeneficio {
+  id_paciente_beneficio Int       @id @default(autoincrement())
+  id_operadora          Int?
+  id_produto            Int?
+  id_tab_prc            Int?
+  tx_matricula          String?   @db.VarChar(30)
+  tx_titular            String?   @db.VarChar(200)
+  tx_empresa            String?   @db.VarChar(200)
+  dt_validade           DateTime?
+  fl_ativo              Boolean   @default(true)
+  dt_criacao            DateTime  @default(now())
+
+  id_paciente Int
+  paciente    Paciente @relation(fields: [id_paciente], references: [id_paciente])
+  id_conta    Int
+  conta       Conta    @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("paciente_beneficio_sub")
+}
+
+// ─── PRESTADOR ENDERECO ─────────────────────────────────────────
+
+model PrestadorEndereco {
+  id_prestador_endereco Int      @id @default(autoincrement())
+  id_tipo_endereco      Int?
+  id_tipo_logradouro    Int?
+  tx_cep                String?  @db.VarChar(10)
+  tx_endereco           String?  @db.VarChar(200)
+  tx_numero             String?  @db.VarChar(10)
+  tx_complemento        String?  @db.VarChar(100)
+  tx_referencia         String?  @db.VarChar(200)
+  id_uf                 Int?
+  id_cidade             Int?
+  id_bairro             Int?
+  fl_ativo              Boolean  @default(true)
+  dt_criacao            DateTime @default(now())
+
+  id_prestador Int
+  prestador    Prestador @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta     Int
+  conta        Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("prestador_endereco")
+}
+
+// ─── PRESTADOR FONE ─────────────────────────────────────────────
+
+model PrestadorFone {
+  id_prestador_fone Int      @id @default(autoincrement())
+  id_tipo_fone      Int?
+  tx_fone_ddd       String?  @db.VarChar(4)
+  tx_fone_nro       String?  @db.VarChar(20)
+  tx_fone_ram       String?  @db.VarChar(10)
+  fl_ativo          Boolean  @default(true)
+  dt_criacao        DateTime @default(now())
+
+  id_prestador Int
+  prestador    Prestador @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta     Int
+  conta        Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("prestador_fone")
+}
+
+// ─── PRESTADOR EMAIL ────────────────────────────────────────────
+
+model PrestadorEmail {
+  id_prestador_email Int      @id @default(autoincrement())
+  id_tipo_email      Int?
+  tx_email           String?  @db.VarChar(200)
+  fl_ativo           Boolean  @default(true)
+  dt_criacao         DateTime @default(now())
+
+  id_prestador Int
+  prestador    Prestador @relation(fields: [id_prestador], references: [id_prestador])
+  id_conta     Int
+  conta        Conta     @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("prestador_email")
+}
+
+// ─── RECIBO ─────────────────────────────────────────────────────
+
+model Recibo {
+  id_recibo          Int       @id @default(autoincrement())
+  tx_numero          String?   @db.VarChar(50)
+  dt_emissao         DateTime?
+  id_paciente        Int?
+  id_prestador       Int?
+  id_pt_header       Int?
+  vl_total           Decimal?  @db.Decimal(12, 2)
+  tx_descricao       String?   @db.Text
+  tx_observacoes     String?   @db.Text
+  cd_tipo            String?   @db.VarChar(30)
+  fl_ativo           Boolean   @default(true)
+  dt_criacao         DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("recibo")
+}
+
+// ─── TAXA COBRANCA ──────────────────────────────────────────────
+
+model TaxaCobranca {
+  id_taxa_cobranca       Int      @id @default(autoincrement())
+  tx_descricao           String?  @db.VarChar(200)
+  cd_tipo                String?  @db.VarChar(50)
+  id_tipo_cal_taxa       Int?
+  vl_percentual          Decimal? @db.Decimal(5, 2)
+  vl_valor               Decimal? @db.Decimal(12, 2)
+  id_tipo_pagto          Int?
+  id_cpagar_conta        Int?
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("taxa_cobranca")
+}
+
+// ─── SIMBOLO ODONTO (odontograma icons) ─────────────────────────
+
+model SimboloOdonto {
+  id_simbolo     Int      @id @default(autoincrement())
+  tx_nome        String?  @db.VarChar(200)
+  tx_nome_icone  String?  @db.VarChar(100)
+  cd_tipo        String?  @db.VarChar(30)
+  vl_ordem       Int?
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("simbolo_odonto")
+}
+
+// ─── PT ITEM ENDO (endodontia) ──────────────────────────────────
+
+model PtItemEndo {
+  id_pt_item_endo             Int      @id @default(autoincrement())
+  id_pt_item                  Int?
+  id_lima_memoria             Int?
+  id_sistema_instrumentacao   Int?
+  id_solucao_irrigadora       Int?
+  id_medicacao_intra_canal    Int?
+  id_cimento_obturador        Int?
+  fl_ativo                    Boolean  @default(true)
+  dt_criacao                  DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  canais PtItemEndoCanal[]
+
+  @@map("pt_item_endo")
+}
+
+// ─── PT ITEM ENDO CANAL ─────────────────────────────────────────
+
+model PtItemEndoCanal {
+  id_pt_item_endo_canal Int      @id @default(autoincrement())
+  id_tipo_canal         Int?
+  tx_canal              String?  @db.VarChar(50)
+  vl_ctp                Decimal? @db.Decimal(5, 2)
+  vl_crt                Decimal? @db.Decimal(5, 2)
+  vl_crd                Decimal? @db.Decimal(5, 2)
+  vl_odontometria       Decimal? @db.Decimal(5, 2)
+  vl_diametro           Decimal? @db.Decimal(5, 2)
+  tx_observacao         String?  @db.Text
+  fl_ativo              Boolean  @default(true)
+
+  id_pt_item_endo Int
+  ptItemEndo      PtItemEndo @relation(fields: [id_pt_item_endo], references: [id_pt_item_endo])
+
+  @@map("pt_item_endo_canal")
+}
+
+// ─── RESERVA ────────────────────────────────────────────────────
+
+model Reserva {
+  id_reserva             Int       @id @default(autoincrement())
+  id_agenda              Int?
+  id_paciente            Int?
+  id_prestador           Int?
+  dt_data                DateTime?
+  vl_hora_inicio         String?   @db.VarChar(5)
+  vl_hora_final          String?   @db.VarChar(5)
+  tx_observacao          String?   @db.Text
+  cd_status              String?   @db.VarChar(30)
+  fl_ativo               Boolean   @default(true)
+  dt_criacao             DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("reserva")
+}
+
+// ─── AVISO (quadro de avisos) ───────────────────────────────────
+
+model Aviso {
+  id_aviso        Int       @id @default(autoincrement())
+  tx_titulo       String?   @db.VarChar(200)
+  tx_mensagem     String?   @db.Text
+  cd_tipo         String?   @db.VarChar(50)
+  cd_prioridade   String?   @db.VarChar(20)
+  dt_inicio       DateTime?
+  dt_fim          DateTime?
+  id_destinatario Int?
+  fl_lido         Boolean   @default(false)
+  fl_ativo        Boolean   @default(true)
+  dt_criacao      DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("aviso")
+}
+
+// ─── MALA DIRETA ────────────────────────────────────────────────
+
+model MalaDireta {
+  id_maladireta   Int       @id @default(autoincrement())
+  tx_titulo       String?   @db.VarChar(200)
+  tx_mensagem     String?   @db.Text
+  cd_tipo_envio   String?   @db.VarChar(30)
+  id_filtro       Int?
+  dt_envio        DateTime?
+  fl_ativo        Boolean   @default(true)
+  dt_criacao      DateTime  @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("maladireta")
+}
+
+// ─── EMPRESA ENDERECO ───────────────────────────────────────────
+
+model EmpresaEndereco {
+  id_empresa_endereco Int      @id @default(autoincrement())
+  id_tipo_endereco    Int?
+  id_tipo_logradouro  Int?
+  tx_cep              String?  @db.VarChar(10)
+  tx_endereco         String?  @db.VarChar(200)
+  tx_numero           String?  @db.VarChar(10)
+  tx_complemento      String?  @db.VarChar(100)
+  tx_referencia       String?  @db.VarChar(200)
+  id_uf               Int?
+  id_cidade           Int?
+  id_bairro           Int?
+  fl_ativo            Boolean  @default(true)
+  dt_criacao          DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("empresa_endereco")
+}
+
+// ─── EMPRESA FONE ───────────────────────────────────────────────
+
+model EmpresaFone {
+  id_empresa_fone Int      @id @default(autoincrement())
+  id_tipo_fone    Int?
+  tx_fone_ddd     String?  @db.VarChar(4)
+  tx_fone_nro     String?  @db.VarChar(20)
+  tx_fone_ram     String?  @db.VarChar(10)
+  fl_ativo        Boolean  @default(true)
+  dt_criacao      DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("empresa_fone")
+}
+
+// ─── EMPRESA EMAIL ──────────────────────────────────────────────
+
+model EmpresaEmail {
+  id_empresa_email Int      @id @default(autoincrement())
+  id_tipo_email    Int?
+  tx_email         String?  @db.VarChar(200)
+  fl_ativo         Boolean  @default(true)
+  dt_criacao       DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("empresa_email")
+}
+
+// ─── CHECKOUT CONTA (carteira digital) ──────────────────────────
+
+model CheckoutConta {
+  id_checkout_conta      Int      @id @default(autoincrement())
+  tx_nome                String?  @db.VarChar(200)
+  cd_tipo                String?  @db.VarChar(50)
+  cd_gateway             String?  @db.VarChar(50)
+  tx_chave_api           String?  @db.VarChar(500)
+  tx_chave_secreta       String?  @db.VarChar(500)
+  tx_webhook_url         String?  @db.VarChar(500)
+  id_cpagar_conta        Int?
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_conta")
+}
+
+// ─── CHECKOUT CARTEIRA ──────────────────────────────────────────
+
+model CheckoutCarteira {
+  id_checkout_carteira   Int      @id @default(autoincrement())
+  id_checkout_conta      Int?
+  tx_nome                String?  @db.VarChar(200)
+  cd_bandeira            String?  @db.VarChar(50)
+  cd_tipo                String?  @db.VarChar(30)
+  vl_taxa_debito         Decimal? @db.Decimal(5, 2)
+  vl_taxa_credito        Decimal? @db.Decimal(5, 2)
+  vl_dias_recebimento    Int?
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_carteira")
+}
+
+// ─── ESTOQUE (depósito/almoxarifado) ────────────────────────────
+
+model Estoque {
+  id_estoque     Int      @id @default(autoincrement())
+  tx_descricao   String?  @db.VarChar(200)
+  tx_endereco    String?  @db.VarChar(200)
+  fl_padrao      Boolean  @default(false)
+  fl_ativo       Boolean  @default(true)
+  dt_criacao     DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("estoque")
+}
+
+// ─── RPS (NFS-e / Nota Fiscal) ──────────────────────────────────
+
+model Rps {
+  id_rps                Int      @id @default(autoincrement())
+  id_emitente           Int?
+  id_creceber_cr        Int?
+  tx_numero_rps         String?  @db.VarChar(50)
+  nr_numero_rps         Int?
+  tx_nr_nfe             String?  @db.VarChar(50)
+  dt_emissao            DateTime?
+  tx_pre_razao_social   String?  @db.VarChar(200)
+  tx_pre_cnpj           String?  @db.VarChar(18)
+  tx_tom_razao_social   String?  @db.VarChar(200)
+  tx_tom_cnpj           String?  @db.VarChar(18)
+  tx_tom_email          String?  @db.VarChar(200)
+  tx_descricao_servico  String?  @db.Text
+  vl_valor_pis          Decimal? @db.Decimal(12, 2)
+  vl_valor_cofins       Decimal? @db.Decimal(12, 2)
+  vl_valor_csll         Decimal? @db.Decimal(12, 2)
+  vl_valor_irpj         Decimal? @db.Decimal(12, 2)
+  vl_valor_inss         Decimal? @db.Decimal(12, 2)
+  vl_total_deducao      Decimal? @db.Decimal(12, 2)
+  vl_base_calculo       Decimal? @db.Decimal(12, 2)
+  vl_aliquota_iss       Decimal? @db.Decimal(5, 2)
+  vl_valor_iss          Decimal? @db.Decimal(12, 2)
+  vl_valor_bruto        Decimal? @db.Decimal(12, 2)
+  id_uf                 Int?
+  id_cidade             Int?
+  id_paciente           Int?
+  id_status             Int?
+  id_ocorrencia         Int?
+  fl_ativo              Boolean  @default(true)
+  id_nfse_gateway       Int?
+  id_checkout_conta     Int?
+  tx_tom_ddd            String?  @db.VarChar(4)
+  tx_tom_fone           String?  @db.VarChar(20)
+  tx_tom_cep            String?  @db.VarChar(10)
+  id_tom_bairro         Int?
+  id_tom_tipo_logradouro Int?
+  tx_tom_numero         String?  @db.VarChar(10)
+  url_impressao         String?  @db.Text
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("rps")
+}
+
+// ─── ASSINATURA DIGITAL ─────────────────────────────────────────
+
+model AssinaturaDigital {
+  id_assinatura_digital Int      @id @default(autoincrement())
+  id_sig_operacao       Int?
+  id_sig_provedor       Int?
+  tx_descricao          String?  @db.Text
+  id_status             Int?
+  vl_saldo              Int?
+  fl_ativo              Boolean  @default(true)
+  dt_criacao            DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("assinatura_digital")
+}
+
+// ─── SIG PT ITEM (itens assinados digitalmente) ─────────────────
+
+model SigPtItem {
+  id_sig_pt_item Int      @id @default(autoincrement())
+  id_sig_log     String?  @db.VarChar(100)
+  id_pt_item     Int?
+  id_pt_header   Int?
+  id_paciente    Int?
+  id_prestador   Int?
+  tx_descricao   String?  @db.VarChar(500)
+  id_status      Int?
+  dt_data        DateTime?
+  fl_ativo       Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("sig_pt_item")
+}
+
+// ─── TIMELINE ───────────────────────────────────────────────────
+
+model TimelineItem {
+  id_timeline       Int      @id @default(autoincrement())
+  dt_data           DateTime?
+  id_item_tipo      Int?
+  tx_descricao      String?  @db.VarChar(500)
+  id_formato        Int?
+  tx_nome_documento String?  @db.VarChar(200)
+  tx_nome_arquivo   String?  @db.VarChar(200)
+  id_tipo_arquivo   Int?
+  vl_sequencia      Int?
+  fl_ativo          Boolean  @default(true)
+  id_paciente       Int?
+  id_prestador      Int?
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("timeline")
+}
+
+// ─── PESSOA DOCUMENTO (fotos/docs pessoa) ───────────────────────
+
+model PessoaDocumento {
+  id_pessoa_documento Int      @id @default(autoincrement())
+  id_paciente         Int?
+  id_prestador        Int?
+  tx_titulo           String?  @db.VarChar(200)
+  tx_nome_arquivo     String?  @db.VarChar(200)
+  tx_tipo_arquivo     String?  @db.VarChar(50)
+  tx_url              String?  @db.Text
+  tx_observacao       String?  @db.Text
+  cd_tipo             String?  @db.VarChar(30)
+  dt_data             DateTime?
+  fl_ativo            Boolean  @default(true)
+  dt_criacao          DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("pessoa_documento")
+}
+
+// ─── PT PARCELA TMP (parcelas tratamento) ───────────────────────
+
+model PtParcelaTmp {
+  id_pt_parcela    Int      @id @default(autoincrement())
+  id_pt_header     Int?
+  dt_vencimento    DateTime?
+  nr_parcela       Int?
+  vl_parcela       Decimal? @db.Decimal(12, 2)
+  fl_ativo         Boolean  @default(true)
+  vl_credito       Decimal? @db.Decimal(12, 2)
+  vl_dia_vencimento Int?
+  dt_criacao       DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("pt_parcela_tmp")
+}
+
+// ─── TITULO ITEM (boletos) ──────────────────────────────────────
+
+model TituloItem {
+  id_titulo_item     Int      @id @default(autoincrement())
+  id_titulo_lote     Int?
+  id_creceber_db     Int?
+  id_boleto_cedente  Int?
+  tx_nosso_numero    String?  @db.VarChar(50)
+  tx_nro_documento   String?  @db.VarChar(50)
+  nr_status          Int?
+  fl_ativo           Boolean  @default(true)
+  dt_vencimento      DateTime?
+  vl_debito          Decimal? @db.Decimal(12, 2)
+  vl_tot_pagamento   Decimal? @db.Decimal(12, 2)
+  id_gateway_cedente Int?
+  dt_criacao         DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("titulo_item")
+}
+
+// ─── PRESTADOR CONTA PREFERENCIA ────────────────────────────────
+
+model PrestadorContaPreferencia {
+  id_prestador_conta_pref             Int      @id @default(autoincrement())
+  id_prestador                        Int?
+  tx_apresentacao                     String?  @db.VarChar(200)
+  id_def_meio_envio_msg               Int?
+  id_def_orcamento_modelo             Int?
+  tx_def_orcamento_mensagem_impressao String?  @db.Text
+  fl_def_orcamento_cnpj               Boolean  @default(false)
+  fl_def_orcamento_cro                Boolean  @default(false)
+  id_def_modulo                       Int?
+  id_def_cpagar_conta                 Int?
+  id_def_estoque                      Int?
+  fl_abrir_painel_aceleradores        Boolean  @default(false)
+  fl_solicitar_assinatura_digital     Boolean  @default(false)
+  cd_cancelamento_nfse                String?  @db.VarChar(50)
+  vl_nfse_iss                         Decimal? @db.Decimal(5, 2)
+  vl_nfse_deducao_perc                Decimal? @db.Decimal(5, 2)
+  vl_descr_tributos                   Decimal? @db.Decimal(5, 2)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("prestador_conta_preferencia")
+}
+
+// ─── RESTRICAO FINANCEIRA ───────────────────────────────────────
+
+model RestricaoFinanceira {
+  id_restricao_financeira Int      @id @default(autoincrement())
+  id_paciente             Int?
+  tx_documento            String?  @db.VarChar(50)
+  tx_cpf                  String?  @db.VarChar(14)
+  fl_restricao            Boolean  @default(false)
+  dt_consulta             DateTime?
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("restricao_financeira")
+}
+
+// ─── RECEBER DB PARCELA ─────────────────────────────────────────
+
+model ReceberDBParcela {
+  id_receber_db_parcela Int      @id @default(autoincrement())
+  id_creceber_db        Int?
+  dt_vencimento         DateTime?
+  vl_saldo              Decimal? @db.Decimal(12, 2)
+  vl_debito             Decimal? @db.Decimal(12, 2)
+  id_pt_header          Int?
+  vl_parcela_inicio     Int?
+  fl_tratamento         Boolean  @default(false)
+  id_carteira_boleto    Int?
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("receber_db_parcela")
+}
+
+// ─── PT ARCADA ANOMALIA ─────────────────────────────────────────
+
+model PtArcadaAnomalia {
+  id_pt_arcada_anomalia Int      @id @default(autoincrement())
+  id_pt_header          Int?
+  nr_dente              Int?
+  id_simbolo_anomalia   Int?
+  tx_descricao          String?  @db.VarChar(200)
+  vl_bit_anomalia       Int?
+  vl_bmp_anomalias      Int?
+  fl_checked            Boolean  @default(false)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("pt_arcada_anomalia")
+}
+
+// ─── CONFIRMACAO (agendamento) ──────────────────────────────────
+
+model Confirmacao {
+  id_token_confirmacao  Int      @id @default(autoincrement())
+  cd_token_confirmacao  String?  @db.VarChar(100)
+  id_agenda_item        Int?
+  dt_validade           DateTime?
+  fl_ativo              Boolean  @default(true)
+  tx_url_confirmacao    String?  @db.Text
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("confirmacao")
+}
+
+// ─── ENVIO LOTE (SMS/email em lote) ─────────────────────────────
+
+model EnvioLote {
+  id_md_envio_lote  Int      @id @default(autoincrement())
+  id_texto          Int?
+  id_rascunho       Int?
+  id_tipo_envio     Int?
+  tx_assunto        String?  @db.VarChar(200)
+  vl_qtd_envios     Int?
+  vl_qtd_pulo       Int?
+  vl_qtd_repeticao  Int?
+  id_agenda_item    Int?
+  id_etiqueta       Int?
+  tx_mensagem_link  String?  @db.Text
+  fl_ativo          Boolean  @default(true)
+  dt_criacao        DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("envio_lote")
+}
+
+// ─── LINK ANAMNESE ──────────────────────────────────────────────
+
+model LinkAnamnese {
+  id_token_anamnese       Int      @id @default(autoincrement())
+  cd_token_anamnese       String?  @db.VarChar(100)
+  id_prestador            Int?
+  id_unidade_atendimento  Int?
+  id_anamnese             Int?
+  id_paciente             Int?
+  id_tipo_envio           Int?
+  tx_ddi                  String?  @db.VarChar(5)
+  tx_fone_celular         String?  @db.VarChar(20)
+  tx_email                String?  @db.VarChar(200)
+  tx_mensagem             String?  @db.Text
+  fl_ativo                Boolean  @default(true)
+  dt_criacao              DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("link_anamnese")
+}
+
+// ─── EDITOR RASCUNHO ────────────────────────────────────────────
+
+model EditorRascunho {
+  id_editor_rascunho Int      @id @default(autoincrement())
+  tx_texto           String?  @db.Text
+  fl_ativo           Boolean  @default(true)
+  dt_criacao         DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("editor_rascunho")
+}
+
+// ─── AGENDA ITEM CAMPO ──────────────────────────────────────────
+
+model AgendaItemCampo {
+  id_agenda_item_campo Int      @id @default(autoincrement())
+  id_agenda            Int?
+  id_campo_agenda      Int?
+  vl_sequencia         Int?
+  fl_ativo             Boolean  @default(true)
+  tx_campos_json       String?  @db.Text
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("agenda_item_campo")
+}
+
+// ─── DATA EXPORT ────────────────────────────────────────────────
+
+model DataExport {
+  id_dataexport Int      @id @default(autoincrement())
+  tx_descricao  String?  @db.VarChar(200)
+  cd_formato    String?  @db.VarChar(30)
+  fl_ativo      Boolean  @default(true)
+  dt_criacao    DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("dataexport")
+}
+
+// ─── DATA EXPORT ITEM ───────────────────────────────────────────
+
+model DataExportItem {
+  id_dataexport_item Int      @id @default(autoincrement())
+  id_dataexport      Int?
+  tx_coluna          String?  @db.VarChar(100)
+  tx_label           String?  @db.VarChar(200)
+  vl_ordem           Int?
+  fl_ativo           Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("dataexport_item")
+}
+
+// ─── RELATORIO USUARIO ──────────────────────────────────────────
+
+model RelatorioUsuario {
+  id_usuario_relatorio Int      @id @default(autoincrement())
+  id_relatorio         Int?
+  tx_template          String?  @db.VarChar(200)
+  tx_procedure         String?  @db.VarChar(200)
+  id_relatorio_grupo   Int?
+  id_tipo_relatorio    Int?
+  tx_descricao         String?  @db.VarChar(200)
+  tx_icone             String?  @db.VarChar(50)
+  tx_view              String?  @db.VarChar(200)
+  fl_favorito          Boolean  @default(false)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("usuario_relatorio")
+}
+
+// ─── RESERVA INTEGRACAO ─────────────────────────────────────────
+
+model ReservaIntegracao {
+  id_reserva_integracao  Int      @id @default(autoincrement())
+  cd_token               String?  @db.VarChar(100)
+  id_agenda              Int?
+  id_prestador           Int?
+  id_unidade_atendimento Int?
+  id_environment         Int?
+  fl_token_publico       Boolean  @default(false)
+  fl_ativo               Boolean  @default(true)
+  dt_criacao             DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("reserva_integracao")
+}
+
+// ─── CHECKOUT CARTEIRA TIPO PARCELAMENTO ────────────────────────
+
+model CheckoutCarteiraTipoParcelamento {
+  id_checkout_carteira_tipo_parc Int      @id @default(autoincrement())
+  id_checkout_carteira           Int?
+  id_checkout_conta              Int?
+  cd_checkout_tipo               String?  @db.VarChar(50)
+  cd_checkout_tipo_gateway       String?  @db.VarChar(50)
+  id_checkout_tipo_parcelamento  Int?
+  vl_min_parcelas                Int?
+  vl_max_parcelas                Int?
+  vl_taxa_fixo                   Decimal? @db.Decimal(12, 2)
+  vl_taxa_perc                   Decimal? @db.Decimal(5, 2)
+  vl_juros_perc                  Decimal? @db.Decimal(5, 2)
+  fl_ativo                       Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_carteira_tipo_parcelamento")
+}
+
+// ─── CHECKOUT COBRANCA LOG ──────────────────────────────────────
+
+model CheckoutCobrancaLog {
+  id_checkout_cobranca_log Int      @id @default(autoincrement())
+  id_checkout_cobranca     Int?
+  cd_status                String?  @db.VarChar(50)
+  tx_mensagem              String?  @db.Text
+  dt_data                  DateTime?
+  fl_ativo                 Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_cobranca_log")
+}
+
+// ─── CHECKOUT COBRANCA PARCELA ──────────────────────────────────
+
+model CheckoutCobrancaParcela {
+  id_checkout_cobranca_parcela Int      @id @default(autoincrement())
+  id_checkout_cobranca         Int?
+  nr_parcela                   Int?
+  vl_valor                     Decimal? @db.Decimal(12, 2)
+  dt_vencimento                DateTime?
+  cd_status                    String?  @db.VarChar(50)
+  fl_ativo                     Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_cobranca_parcela")
+}
+
+// ─── CHECKOUT TIPO PARCELAMENTO ─────────────────────────────────
+
+model CheckoutTipoParcelamento {
+  id_checkout_tipo_parcelamento Int      @id @default(autoincrement())
+  tx_nome                       String?  @db.VarChar(200)
+  cd_tipo                       String?  @db.VarChar(50)
+  vl_min_parcelas               Int?
+  vl_max_parcelas               Int?
+  vl_taxa_fixo                  Decimal? @db.Decimal(12, 2)
+  vl_taxa_perc                  Decimal? @db.Decimal(5, 2)
+  fl_ativo                      Boolean  @default(true)
+  dt_criacao                    DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_tipo_parcelamento")
+}
+
+// ─── CHECKOUT CONTA DOCUMENTO ───────────────────────────────────
+
+model CheckoutContaDocumento {
+  id_checkout_conta_documento Int      @id @default(autoincrement())
+  id_checkout_conta           Int?
+  tx_nome_arquivo             String?  @db.VarChar(200)
+  tx_url                      String?  @db.Text
+  cd_tipo                     String?  @db.VarChar(50)
+  fl_ativo                    Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_conta_documento")
+}
+
+// ─── CHECKOUT EXTRATO ───────────────────────────────────────────
+
+model CheckoutExtrato {
+  id_checkout_extrato Int      @id @default(autoincrement())
+  id_checkout_conta   Int?
+  dt_data             DateTime?
+  vl_valor            Decimal? @db.Decimal(12, 2)
+  cd_tipo             String?  @db.VarChar(50)
+  fl_ativo            Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("checkout_extrato")
+}
+
+// ─── RESTRICAO FINANCEIRA PACIENTE ──────────────────────────────
+
+model RestricaoFinanceiraPaciente {
+  id_restricao_fin_pac    Int      @id @default(autoincrement())
+  id_paciente             Int?
+  id_restricao_financeira Int?
+  tx_descricao            String?  @db.Text
+  fl_restricao            Boolean  @default(false)
+  fl_ativo                Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("restricao_financeira_paciente")
+}
+
+// ─── PACIENTE FOTO ──────────────────────────────────────────────
+
+model PacienteFoto {
+  id_paciente_foto Int      @id @default(autoincrement())
+  id_paciente      Int?
+  tx_nome_arquivo  String?  @db.VarChar(200)
+  tx_url           String?  @db.Text
+  cd_tipo          String?  @db.VarChar(30)
+  fl_ativo         Boolean  @default(true)
+  dt_criacao       DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("paciente_foto")
+}
+
+// ─── PRESTADOR FOTO ─────────────────────────────────────────────
+
+model PrestadorFoto {
+  id_prestador_foto Int      @id @default(autoincrement())
+  id_prestador      Int?
+  tx_nome_arquivo   String?  @db.VarChar(200)
+  tx_url            String?  @db.Text
+  cd_tipo           String?  @db.VarChar(30)
+  tx_descricao      String?  @db.VarChar(200)
+  fl_ativo          Boolean  @default(true)
+  dt_criacao        DateTime @default(now())
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("prestador_foto")
+}
+
+// ─── RPS EMITENTE ───────────────────────────────────────────────
+
+model RpsEmitente {
+  id_rps_emitente      Int      @id @default(autoincrement())
+  tx_razao_social      String?  @db.VarChar(200)
+  tx_cnpj              String?  @db.VarChar(18)
+  tx_inscricao_municipal String? @db.VarChar(30)
+  id_nfse_gateway      Int?
+  fl_ativo             Boolean  @default(true)
+
+  id_conta Int
+  conta    Conta @relation(fields: [id_conta], references: [id_conta])
+
+  @@map("rps_emitente")
+}
