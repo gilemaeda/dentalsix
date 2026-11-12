@@ -2090,9 +2090,22 @@ function addColumnsIfNotExist(
   );
 }
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const url = new URL(request.url);
+    const reset = url.searchParams.get("reset") === "true";
     const results: string[] = [];
+
+    if (reset) {
+      const tables = MIGRATION_STATEMENTS
+        .map((s) => s.match(/CREATE TABLE IF NOT EXISTS "(\w+)"/i))
+        .filter(Boolean)
+        .map((m) => m![1]);
+      for (const t of tables.reverse()) {
+        await prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${t}" CASCADE`);
+      }
+      results.push("reset_all_tables");
+    }
 
     for (const stmt of MIGRATION_STATEMENTS) {
       await prisma.$executeRawUnsafe(stmt);
